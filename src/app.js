@@ -51,19 +51,6 @@ userStore.checkVersion(
   }
 );
 
-// Lists all notebooks in the user's account.
-var noteStore = client.getNoteStore();
-var notebooks = noteStore.listNotebooks(function(err, notebooks) {
-  userStore.getUser(function(err, user) {
-    console.log(util.format('%s has %d notebooks:', user.username.bold, notebooks.length));
-    console.log();
-    notebooks.forEach(function(notebook, index) {
-      console.log(util.format('\t%s. %s', index + 1, notebook.name));
-    });
-    console.log();
-  });
-});
-
 // Creates a new note.
 var note = new Evernote.Note();
 var filename = __filename.split(path.sep).pop();
@@ -109,6 +96,7 @@ note.content = (
 );
 
 // Uploads note to the NoteStore.
+var noteStore = client.getNoteStore();
 noteStore.createNote(note, function(err, createdNote) {
   console.log(util.format('%s with ID %s and %d attachment(s).',
     'Created a new note'.green,
