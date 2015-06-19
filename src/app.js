@@ -11,6 +11,7 @@ var crypto = require('crypto');
 var Evernote = require('evernote').Evernote;
 var path = require('path');
 var util = require('util');
+var uuid = require('node-uuid');
 
 var authToken = config.DEVELOPER_TOKEN || undefined;
 if (!authToken) {
@@ -93,6 +94,7 @@ hashHex = md5.digest('hex');
 // Constructs the note's content.
 // See http://dev.evernote.com/documentation/cloud/chapters/ENML.php
 // for full ENML specification.
+var creationID = uuid.v1();
 note.content = (
   '<?xml version="1.0" encoding="UTF-8"?>' +
   '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">' +
@@ -101,6 +103,7 @@ note.content = (
       filename,
       util.format('http://twitter.com/%s', process.env.npm_package_author_name),
       process.env.npm_package_author_name) +
+    util.format('<p>This note\'s time-based <b>Creation ID</b> is <i>%s</i></p>', creationID) +
     util.format('<en-media type="image/png" hash="%s"/>', hashHex) +
   '</en-note>'
 );
@@ -112,4 +115,22 @@ noteStore.createNote(note, function(err, createdNote) {
     createdNote.guid.bold,
     createdNote.resources.length));
   console.log();
+
+  // Searches for the note just created.
+  console.log('Searching for this note...');
+  var noteFilter = new Evernote.NoteFilter();
+  noteFilter.words = util.format('created:day %s', creationID);
+  var notesMetadataResultSpec = new Evernote.NotesMetadataResultSpec();
+  noteStore.findNotesMetadata(noteFilter, 0, 10, notesMetadataResultSpec, function(err, notes) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+    console.log(util.format('Found %d matching note(s).', notes.totalNotes));
+    console.log();
+    notes.notes.forEach(function(note) {
+      console.log(util.format('\tID %s', note.guid.bold));
+    });
+    console.log();
+  });
 });

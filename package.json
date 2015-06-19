@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "colors": "^1.1.2",
-    "evernote": "^1.25.7"
+    "evernote": "^1.25.7",
+    "node-uuid": "^1.4.3"
   }
 }
