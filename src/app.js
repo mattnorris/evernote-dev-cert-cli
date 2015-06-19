@@ -118,16 +118,16 @@ userStore.checkVersion(
 
 // Lists all notebooks in the user's account.
 var noteStore = client.getNoteStore();
-// var notebooks = noteStore.listNotebooks(function(err, notebooks) {
-//   userStore.getUser(function(err, user) {
-//     console.log(util.format('%s has %d notebooks:', user.username.bold, notebooks.length));
-//     console.log();
-//     notebooks.forEach(function(notebook, index) {
-//       console.log(util.format('\t%s. %s', index + 1, notebook.name));
-//     });
-//     console.log();
-//   });
-// });
+var notebooks = noteStore.listNotebooks(function(err, notebooks) {
+  userStore.getUser(function(err, user) {
+    console.log(util.format('%s has %d notebooks:', user.username.bold, notebooks.length));
+    console.log();
+    notebooks.forEach(function(notebook, index) {
+      console.log(util.format('\t%s. %s', index + 1, notebook.name));
+    });
+    console.log();
+  });
+});
 
 // TODO: Notice about `npm start` doesn't work with args.
 if (Object.keys(argv).length <= 2 && !argv._.length) {
