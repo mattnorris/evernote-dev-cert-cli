@@ -14,12 +14,21 @@ var util = require('util');
 
 var authToken = config.DEVELOPER_TOKEN || undefined;
 if (!authToken) {
-  var CONFIG = 'config.js';
-  var CONFIG_TEMPLATE = 'config.template.js';
-  console.error("I'm sorry. ".bold +
-    "I cannot proceed without your " + "DEVELOPER_TOKEN.".bold);
-  console.error(util.format('Please rename %s to %s, then copy/paste it there.', 'config.template.js'.yellow, 'config.js'.green));
-  process.exit(1);
+  console.error("I'm sorry. ".red +
+    "I can't proceed without your " + "DEVELOPER_TOKEN.".bold);
+  console.error();
+  console.error(util.format("\t1. Sign up for a sandbox account at %s",
+    'https://sandbox.evernote.com/Registration.action'.underline));
+  console.error(util.format("\t2. Get your %s at %s",
+    'DEVELOPER_TOKEN'.bold,
+    'https://sandbox.evernote.com/api/DeveloperToken.action'.underline));
+  console.error(util.format("\t3. Copy/paste it into %s",
+    'config.template.js'.yellow));
+  console.error(util.format("\t4. Rename %s to %s",
+    'config.template.js'.yellow, 'config.js'.green));
+  console.error(util.format("\t5. Run this script again."));
+  console.error();
+  process.exit();
 }
 var client = new Evernote.Client({token: authToken, sandbox: true});
 var userStore = client.getUserStore();
@@ -41,6 +50,7 @@ var noteStore = client.getNoteStore();
 var notebooks = noteStore.listNotebooks(function(err, notebooks) {
   userStore.getUser(function(err, user) {
     console.log(util.format('%s has %d notebooks:', user.username.bold, notebooks.length));
+    console.log();
     notebooks.forEach(function(notebook, index) {
       console.log(util.format('\t%s. %s', index + 1, notebook.name));
     });
@@ -74,7 +84,8 @@ var md5 = crypto.createHash('md5');
 md5.update(image);
 hashHex = md5.digest('hex');
 
-// Constructs the note. See http://dev.evernote.com/documentation/cloud/chapters/ENML.php
+// Constructs the note.
+// See http://dev.evernote.com/documentation/cloud/chapters/ENML.php
 // for full ENML specification.
 note.content = '<?xml version="1.0" encoding="UTF-8"?>';
 note.content += '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">';
