@@ -95,6 +95,9 @@ note.content = (
 // Uploads note to the NoteStore.
 var noteStore = client.getNoteStore();
 noteStore.createNote(note, function(err, createdNote) {
-  console.log(util.format('%s with ID %s', 'Created a new note'.green, createdNote.guid.bold));
+  console.log(util.format('%s with ID %s and %d attachment(s).',
+    'Created a new note'.green,
+    createdNote.guid.bold,
+    createdNote.resources.length));
   console.log();
 });
