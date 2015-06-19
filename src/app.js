@@ -9,19 +9,19 @@ var config = require('../config.json');
 var crypto = require('crypto');
 var Evernote = require('evernote').Evernote;
 var path = require('path');
-
+var util = require('util');
 
 var authToken = config.DEVELOPER_TOKEN;
 var client = new Evernote.Client({token: authToken, sandbox: true});
 var userStore = client.getUserStore();
 
 userStore.checkVersion(
-  "Evernote EDAMTest (Node.js)",
+  "Evernote Certified Developer Program Exercise",
   Evernote.EDAM_VERSION_MAJOR,
   Evernote.EDAM_VERSION_MINOR,
   function(err, versionOk) {
-    console.log("Evernote API version up to date? " + versionOk);
     if (!versionOk) {
+      console.log("Evernote API version not up-to-date.\nPlease update before continuing.");
       process.exit(1);
     }
   }
