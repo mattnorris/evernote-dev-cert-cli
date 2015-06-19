@@ -1,0 +1,14 @@
+{
+  "name": "en-dev-cert-ex-5",
+  "version": "0.0.0",
+  "description": "",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "@mattnorrisme",
+  "license": "ISC",
+  "dependencies": {
+    "evernote": "^1.25.7"
+  }
+}
