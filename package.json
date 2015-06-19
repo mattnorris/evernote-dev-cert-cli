@@ -10,6 +10,7 @@
   "author": "@mattnorrisme",
   "license": "ISC",
   "dependencies": {
+    "colors": "^1.1.2",
     "evernote": "^1.25.7"
   }
 }

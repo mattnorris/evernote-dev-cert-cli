@@ -5,6 +5,7 @@
  */
 
 var fs = require('fs');
+var colors = require('colors');
 var config = require('../config.json');
 var crypto = require('crypto');
 var Evernote = require('evernote').Evernote;
@@ -13,8 +14,11 @@ var util = require('util');
 
 var authToken = config.DEVELOPER_TOKEN || undefined;
 if (!authToken) {
-  console.error(util.format('Please provide your DEVELOPER_TOKEN in %s', path.join(__dirname, 'config.json')));
-  console.error(util.format('See %s for details.', path.join(__dirname, 'config.template.json')));
+  var CONFIG = 'config.js';
+  var CONFIG_TEMPLATE = 'config.template.js';
+  console.error("I'm sorry. ".bold +
+    "I cannot proceed without your " + "DEVELOPER_TOKEN.".bold);
+  console.error(util.format('Please rename %s to %s, then copy/paste it there.', 'config.template.js'.yellow, 'config.js'.green));
   process.exit(1);
 }
 var client = new Evernote.Client({token: authToken, sandbox: true});
@@ -36,10 +40,11 @@ userStore.checkVersion(
 var noteStore = client.getNoteStore();
 var notebooks = noteStore.listNotebooks(function(err, notebooks) {
   userStore.getUser(function(err, user) {
-    console.log(util.format('%s has %d notebooks:', user.username, notebooks.length));
-    notebooks.forEach(function(notebook) {
-      console.log(util.format('\t%s', notebook.name));
+    console.log(util.format('%s has %d notebooks:', user.username.bold, notebooks.length));
+    notebooks.forEach(function(notebook, index) {
+      console.log(util.format('\t%s. %s', index + 1, notebook.name));
     });
+    console.log();
   });
 });
 
@@ -79,5 +84,6 @@ note.content += '</en-note>';
 
 // Creates the note.
 noteStore.createNote(note, function(err, createdNote) {
-  console.log("Created new note with GUID: " + createdNote.guid);
+  console.log(util.format('%s with ID %s', 'Created a new note'.green, createdNote.guid.bold));
+  console.log();
 });
