@@ -73,6 +73,27 @@ var createNote = function() {
   });
 }
 
+/**
+ * Gets the note with the specified GUID.
+ * @param  {[type]} guid [description]
+ * @return {[type]}      [description]
+ */
+var getNote = function(guid) {
+  noteStore.getNote(authToken, guid, true, false, false, false, function(err, note) {
+    if (err) {
+      console.error(err.red)
+    }
+    console.log(util.format('%s with ID %s', 'Retrieved note'.green, note.guid.bold));
+    console.log(note.content);
+    console.log();
+  });
+
+  // noteStore.getNote(userInfo.authToken, guid, withContent, withResourcesData, withResourcesRecognition, withResourcesAlternateData,
+	// 	function(err, response) {
+  //   	callback(err, response);
+  // 	});
+}
+
 //
 // Script
 //
@@ -118,21 +139,40 @@ userStore.checkVersion(
 
 // Lists all notebooks in the user's account.
 var noteStore = client.getNoteStore();
-var notebooks = noteStore.listNotebooks(function(err, notebooks) {
-  userStore.getUser(function(err, user) {
-    console.log(util.format('%s has %d notebooks:', user.username.bold, notebooks.length));
-    console.log();
-    notebooks.forEach(function(notebook, index) {
-      console.log(util.format('\t%s. %s', index + 1, notebook.name));
-    });
-    console.log();
-  });
-});
+// var notebooks = noteStore.listNotebooks(function(err, notebooks) {
+//   userStore.getUser(function(err, user) {
+//     console.log(util.format('%s has %d notebooks:', user.username.bold, notebooks.length));
+//     console.log();
+//     notebooks.forEach(function(notebook, index) {
+//       console.log(util.format('\t%s. %s', index + 1, notebook.name));
+//     });
+//     console.log();
+//   });
+// });
 
 // TODO: Notice about `npm start` doesn't work with args.
 if (Object.keys(argv).length <= 2 && !argv._.length) {
   createNote();
 }
 else {
-  console.log('Invalid arguments:', argv);
+  // Get with GUID
+  if (argv.g) {
+    console.log(util.format('%s with ID %s', 'Getting note'.yellow, argv.g.bold));
+    // Destroy retrieved disclaimer
+    // TODO: Remove logo too
+    if (argv.d) {
+      // alter text
+      // remove image
+    }
+    // Fix GUID by making sure disclaimer is there.
+    else if (argv.f) {
+
+    }
+    else {
+      getNote(argv.g);
+    }
+  }
+  else {
+    console.log('Invalid arguments:', argv);
+  }
 }
