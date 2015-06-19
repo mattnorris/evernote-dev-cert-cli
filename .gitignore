@@ -1,4 +1,5 @@
 node_modules
+tmp
 
 # Contains sensitive info.
 config.json
