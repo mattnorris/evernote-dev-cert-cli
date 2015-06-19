@@ -37,10 +37,15 @@ userStore.checkVersion(
   "Evernote Certified Developer Program Exercise",
   Evernote.EDAM_VERSION_MAJOR,
   Evernote.EDAM_VERSION_MINOR,
-  function(err, versionOk) {
-    if (!versionOk) {
-      console.error("Evernote API version not up-to-date.\nPlease update before continuing.");
-      process.exit(2);
+  function(err, versionOK) {
+    if (!versionOK) {
+      console.error(util.format("%s The %s is not up-to-date.",
+        "I'm sorry.".red, "Evernote SDK".bold));
+      console.error("Please run the following before running this script again:");
+      console.error();
+      console.error('\tnpm prune && npm install');
+      console.error();
+      process.exit();
     }
   }
 );
