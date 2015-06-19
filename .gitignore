@@ -1,4 +1,4 @@
 node_modules
 
-# Contains sensitive info
+# Contains sensitive info.
 config.json
