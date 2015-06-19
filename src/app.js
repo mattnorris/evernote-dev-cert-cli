@@ -5,7 +5,7 @@
  */
 
 var fs = require('fs');
-var config = require('../../config.json');
+var config = require('../config.json');
 var crypto = require('crypto');
 var Evernote = require('evernote').Evernote;
 var path = require('path');
@@ -43,7 +43,7 @@ note.title = "Test note from EDAMTest.js";
 
 // Creates attachment resource containing the file's binary data,
 // an MD5 hash of the file's binary data, and the file's MIME type.
-var image = fs.readFileSync(path.join(__dirname, '../../input/', 'enlogo.png'));
+var image = fs.readFileSync(path.join(__dirname, '../input/', 'enlogo.png'));
 var hash = image.toString('base64');
 
 var data = new Evernote.Data();
