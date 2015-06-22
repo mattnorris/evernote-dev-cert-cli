@@ -3,6 +3,8 @@
 ## Install
 
     git clone git@github.com:mattnorris/evernote-dev-cert-cli.git
+    cd evernote-dev-cert-cli
+    npm install
 
 ## Configure
 Switch to the desired branch (each branch is an exercise). For example:
