@@ -6,6 +6,7 @@
 
 var argv = require('yargs')
   .alias('c', 'create')
+  .alias('d', 'disclaimer')
   .alias('g', 'guid')
   .alias('l', 'list')
   .argv;
@@ -16,6 +17,8 @@ var crypto = require('crypto');
 var Evernote = require('evernote').Evernote;
 var path = require('path');
 var util = require('util');
+
+require('es6-promise').polyfill();
 
 //
 // Functions
@@ -74,6 +77,28 @@ var createNote = function() {
       createdNote.guid.bold,
       createdNote.resources.length));
     console.log();
+  });
+}
+
+var addDisclaimer = function(guid) {
+  var disclaimerText = "This note and any files transmitted with it are confidential and intended solely for the use of the individual or entity to whom they are addressed. If you have received this note in error please notify the system manager. This note contains confidential information and is intended only for the individual named. If you are not the named addressee you should not disseminate, distribute or copy this note. Please notify the sender immediately by e-mail if you have received this note by mistake and delete this note from your system. If you are not the intended recipient you are notified that disclosing, copying, distributing or taking any action in reliance on the contents of this information is strictly prohibited.";
+
+  var note;
+  _getNoteP(guid).then(function(note) {
+    console.log('addDisclaimer', note.content);
+  });
+}
+
+var _getNoteP = function(guid) {
+  return new Promise(function(resolve, reject) {
+    noteStore.getNote(authToken, guid, true, false, false, false, function(err, note) {
+      if (note) {
+        resolve(note);
+      }
+      else {
+        reject(err);
+      }
+    });
   });
 }
 
@@ -180,14 +205,14 @@ if (Object.keys(argv).length <=2 && !argv._.length) {
 }
 else {
   var argvValid = false;
-  
+
   // Lists notebooks.
   if (argv.l) {
     listNotebooks();
     argvValid = true;
   }
   // Gets the note with the provided GUID.
-  if (argv.g) {
+  if (argv.g && argv.g !== true) {
     console.log(util.format('%s with ID %s...', 'Getting note'.yellow, argv.g.bold));
     getNote(argv.g);
     argvValid = true;
@@ -195,6 +220,12 @@ else {
   // Creates a new note.
   if (argv.c) {
     createNote();
+    argvValid = true;
+  }
+  // Adds disclaimer to note.
+  if (argv.d && argv.d !== true) {
+    // TODO: Reuse getNote
+    addDisclaimer(argv.d);
     argvValid = true;
   }
 
