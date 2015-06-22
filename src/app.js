@@ -4,7 +4,10 @@
  * Lists all notebooks in Evernote users's account and creates a new note.
  */
 
-var argv = require('yargs').argv;
+var argv = require('yargs')
+  .alias('g', 'guid')
+  .alias('l', 'list')
+  .argv;
 var fs = require('fs');
 var colors = require('colors');
 var config = require('../config.json');
@@ -59,6 +62,7 @@ var createNote = function() {
         filename,
         util.format('http://twitter.com/%s', process.env.npm_package_author_name),
         process.env.npm_package_author_name) +
+        // TODO: Check that name can be added as attribute!!!!!!!!
       util.format('<en-media type="image/png" hash="%s"/>', hashHex) +
     '</en-note>'
   );
@@ -79,19 +83,43 @@ var createNote = function() {
  * @return {[type]}      [description]
  */
 var getNote = function(guid) {
+  //noteStore.getNote(userInfo.authToken, guid, withContent, withResourcesData, withResourcesRecognition, withResourcesAlternateData,
   noteStore.getNote(authToken, guid, true, false, false, false, function(err, note) {
-    if (err) {
-      console.error(err.red)
+    // if (err) {
+    //   console.error('Error:', err.red)
+    // }
+    if (note) {
+      console.log(util.format('%s with ID %s', 'Retrieved note'.green, note.guid.bold));
+      // console.log(note.content);
+      console.log();
     }
-    console.log(util.format('%s with ID %s', 'Retrieved note'.green, note.guid.bold));
-    console.log(note.content);
-    console.log();
+    else {
+      console.error();
+      console.error(util.format('%s, the note with ID %s %s.',
+        "I'm sorry".red,
+        guid.bold,
+        'could not be found'));
+      console.error('Please try another ID.');
+      console.error();
+    }
   });
+}
 
-  // noteStore.getNote(userInfo.authToken, guid, withContent, withResourcesData, withResourcesRecognition, withResourcesAlternateData,
-	// 	function(err, response) {
-  //   	callback(err, response);
-  // 	});
+/**
+ * Lists user's notebooks.
+ */
+var listNotebooks = function() {
+  noteStore.listNotebooks(function(err, notebooks) {
+    userStore.getUser(function(err, user) {
+      console.log();
+      console.log(util.format('%s has %d notebooks:', user.username.bold, notebooks.length));
+      console.log();
+      notebooks.forEach(function(notebook, index) {
+        console.log(util.format('\t%s. %s', index + 1, notebook.name));
+      });
+      console.log();
+    });
+  });
 }
 
 //
@@ -136,43 +164,28 @@ userStore.checkVersion(
   }
 );
 
-
-// Lists all notebooks in the user's account.
 var noteStore = client.getNoteStore();
-// var notebooks = noteStore.listNotebooks(function(err, notebooks) {
-//   userStore.getUser(function(err, user) {
-//     console.log(util.format('%s has %d notebooks:', user.username.bold, notebooks.length));
-//     console.log();
-//     notebooks.forEach(function(notebook, index) {
-//       console.log(util.format('\t%s. %s', index + 1, notebook.name));
-//     });
-//     console.log();
-//   });
-// });
 
 // TODO: Notice about `npm start` doesn't work with args.
 if (Object.keys(argv).length <= 2 && !argv._.length) {
   createNote();
 }
 else {
-  // Get with GUID
+  var argvValid = false;
+  // Gets the note with the provided GUID.
   if (argv.g) {
-    console.log(util.format('%s with ID %s', 'Getting note'.yellow, argv.g.bold));
-    // Destroy retrieved disclaimer
-    // TODO: Remove logo too
-    if (argv.d) {
-      // alter text
-      // remove image
-    }
-    // Fix GUID by making sure disclaimer is there.
-    else if (argv.f) {
-
-    }
-    else {
-      getNote(argv.g);
-    }
+    console.log(util.format('%s with ID %s...', 'Getting note'.yellow, argv.g.bold));
+    getNote(argv.g);
+    argvValid = true;
   }
-  else {
-    console.log('Invalid arguments:', argv);
+  if (argv.l) {
+    listNotebooks();
+    argvValid = true;
+  }
+  if (!argvValid) {
+    console.error();
+    console.error(util.format("%s, I didn't recognize any valid options.", "I'm sorry".red));
+    console.error('Please try again.');
+    console.error();
   }
 }
