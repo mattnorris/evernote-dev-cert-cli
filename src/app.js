@@ -18,6 +18,7 @@ var Evernote = require('evernote').Evernote;
 var path = require('path');
 var util = require('util');
 
+// TODO: REMOVE
 var xml2js = require('xml2js');
 var parseString = require('xml2js').parseString;
 
@@ -103,39 +104,33 @@ var addDisclaimer = function(guid) {
   var disclaimerText = "This note and any files transmitted with it are confidential and intended solely for the use of the individual or entity to whom they are addressed. If you have received this note in error please notify the system manager. This note contains confidential information and is intended only for the individual named. If you are not the named addressee you should not disseminate, distribute or copy this note. Please notify the sender immediately by e-mail if you have received this note by mistake and delete this note from your system. If you are not the intended recipient you are notified that disclosing, copying, distributing or taking any action in reliance on the contents of this information is strictly prohibited.";
 
   _getNoteP(guid).then(function(note) {
-
+    var attachment = constructAttachment(
+      path.join(__dirname, '../input/', 'a42-disclaimerLogo.png'));
+    if (!note.resources) {
+      note.resources = [];
+    }
+    note.resources.push(attachment.resource);
     note.content = note.content.replace('<en-note>',
       (
         '<en-note>' +
+          util.format('<en-media type="image/png" hash="%s" />', attachment.hash) +
           util.format('<blockquote>%s</blockquote>', disclaimerText) +
           '<hr/>'
       )
     );
 
-    console.log(note.content);
-
-    // parseString(note.content, function(err, result) {
-    //   if (err) {
-    //     console.error(err.red);
-    //     console.error();
-    //   }
-    //   else {
-    //
-    //     console.log(result);
-    //     // console.dir(result['en-note'].p);
-    //
-    //     var updatedNote = result;
-    //     var builder = new xml2js.Builder({docType: {ext: "http://xml.evernote.com/pub/enml2.dtd"}});
-    //     var xml = builder.buildObject(updatedNote);
-    //     // console.log(xml);
-    //     note_.content = xml;
-    //     console.log(note_.content);
-    //     noteStore.updateNote(authToken, note_, function(err, updatedNote) {
-    //       console.error(err);
-    //       console.log(updatedNote)
-    //     });
-    //   }
-    // });
+    noteStore.updateNote(authToken, note, function(err, updatedNote) {
+      if (err) {
+        console.error('Error:', err, updatedNote);
+      }
+      else {
+        console.log(util.format('%s with ID %s with disclaimer. %d attachment(s) total.',
+          'Updated note'.green,
+          updatedNote.guid.bold,
+          updatedNote.resources.length));
+        console.log();
+      }
+    });
   });
 }
 
