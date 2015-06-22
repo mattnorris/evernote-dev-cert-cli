@@ -5,6 +5,7 @@
  */
 
 var argv = require('yargs')
+  .alias('c', 'create')
   .alias('g', 'guid')
   .alias('l', 'list')
   .argv;
@@ -94,7 +95,6 @@ var getNote = function(guid) {
       console.log();
     }
     else {
-      console.error();
       console.error(util.format('%s, the note with ID %s %s.',
         "I'm sorry".red,
         guid.bold,
@@ -111,7 +111,6 @@ var getNote = function(guid) {
 var listNotebooks = function() {
   noteStore.listNotebooks(function(err, notebooks) {
     userStore.getUser(function(err, user) {
-      console.log();
       console.log(util.format('%s has %d notebooks:', user.username.bold, notebooks.length));
       console.log();
       notebooks.forEach(function(notebook, index) {
@@ -120,6 +119,16 @@ var listNotebooks = function() {
       console.log();
     });
   });
+}
+
+/**
+ * Prints help.
+ */
+var printHelp = function() {
+  console.error(util.format("%s, I didn't recognize any valid options.", "I'm sorry".red));
+  console.error('Please try again.');
+  console.error();
+  process.exit();
 }
 
 //
@@ -167,25 +176,30 @@ userStore.checkVersion(
 var noteStore = client.getNoteStore();
 
 // TODO: Notice about `npm start` doesn't work with args.
-if (Object.keys(argv).length <= 2 && !argv._.length) {
-  createNote();
+if (Object.keys(argv).length <=2 && !argv._.length) {
+  printHelp();
 }
 else {
   var argvValid = false;
+  // Lists notebooks.
+  if (argv.l) {
+    listNotebooks();
+    argvValid = true;
+  }
   // Gets the note with the provided GUID.
   if (argv.g) {
     console.log(util.format('%s with ID %s...', 'Getting note'.yellow, argv.g.bold));
     getNote(argv.g);
     argvValid = true;
   }
-  if (argv.l) {
-    listNotebooks();
+  // Creates a new note.
+  if (argv.c) {
+    createNote();
     argvValid = true;
   }
+
+  // Prints help if no valid options were provided.
   if (!argvValid) {
-    console.error();
-    console.error(util.format("%s, I didn't recognize any valid options.", "I'm sorry".red));
-    console.error('Please try again.');
-    console.error();
+    printHelp();
   }
 }
