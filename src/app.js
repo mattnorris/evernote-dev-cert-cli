@@ -63,7 +63,6 @@ var createNote = function() {
         filename,
         util.format('http://twitter.com/%s', process.env.npm_package_author_name),
         process.env.npm_package_author_name) +
-        // TODO: Check that name can be added as attribute!!!!!!!!
       util.format('<en-media type="image/png" hash="%s"/>', hashHex) +
     '</en-note>'
   );
@@ -181,6 +180,7 @@ if (Object.keys(argv).length <=2 && !argv._.length) {
 }
 else {
   var argvValid = false;
+  
   // Lists notebooks.
   if (argv.l) {
     listNotebooks();
