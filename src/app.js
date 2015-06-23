@@ -195,8 +195,14 @@ var listNotebooks = function() {
  */
 var printHelp = function() {
   console.error(util.format("%s, I didn't recognize any valid options.", "I'm sorry".red));
-  console.error('Please try again.');
-  console.error();
+  console.log();
+  console.error('Please try one of the following flags:'.bold);
+  console.log();
+  console.log("\t-l, --list\t\tLists user's notebooks");
+  console.log("\t-c, --create\t\tCreates a new sample note");
+  console.log("\t-g, --guid [ID]\t\tReturns the specified note");
+  console.log("\t-d, --disclaimer [ID]\tAdds disclaimer to the specified note");
+  console.log();
   process.exit();
 }
 
@@ -231,9 +237,10 @@ userStore.checkVersion(
   Evernote.EDAM_VERSION_MINOR,
   function(err, versionOK) {
     if (!versionOK) {
-      console.error(util.format("%s The %s is not up-to-date.",
-        "I'm sorry.".red, "Evernote SDK".bold));
-      console.error("Please run the following before running this script again:");
+      console.error(util.format("%s, the %s is not up-to-date.",
+        "I'm sorry".red, "Evernote SDK".bold));
+      console.log();
+      console.error("Please run the following before running this script again:".bold);
       console.error();
       console.error('\tnpm prune && npm install');
       console.error();
