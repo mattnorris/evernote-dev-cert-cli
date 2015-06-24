@@ -181,9 +181,14 @@ var getNote = function(guid) {
  * @param  {Array} notebooks list of user's notebooks
  */
 var _printNotebooks = function(notebooks) {
-  notebooks.forEach(function(notebook, index) {
-    console.log(util.format('\t%s. %s', index + 1, notebook.name));
-  });
+  if (!notebooks) {
+    console.log('\tNo notebooks.');
+  }
+  else {
+    notebooks.forEach(function(notebook, index) {
+      console.log(util.format('\t%s. %s', index + 1, notebook.name || notebook.shareName));
+    });
+  }
 }
 
 /**
@@ -201,6 +206,41 @@ var listNotebooks = function() {
   });
 }
 
+var createBusinessNotebookAndNote = function() {
+  var notebook = new Evernote.Notebook();
+  notebook.name = 'Sample Business Notebook ' + new Date().getTime();
+  client.createBusinessNotebook(notebook, function(err, createdNotebook) {
+    // FIXME: createdNotebook is always 'undefined',
+    // but the notebook is created success.
+    // console.error(err);
+    // console.log(createdNotebook);
+    _getBusinessNotebooksP().then(function(notebooks) {
+      var latest = notebooks[notebooks.length-1];
+      console.log(latest, notebooks.length)
+    });
+  });
+}
+
+var _getBusinessNotebooksP = function() {
+  return new Promise(function(resolve, reject) {
+    userStore.getUser(function(err, user) {
+      if (user && user.isBusinessUser) {
+        client.getBusinessNoteStore().listNotebooks(function(err, notebooks) {
+          if (notebooks) {
+            resolve(notebooks);
+          }
+          else {
+            reject(err);
+          }
+        });
+      }
+      else {
+        reject(err);
+      }
+    });
+  });
+}
+
 /**
  * Lists the current user's username and business notebooks.
  */
@@ -209,6 +249,14 @@ var listBusinessNotebooks = function() {
     if (user.isBusinessUser) {
       client.getBusinessNoteStore().listNotebooks(function(err, notebooks) {
         console.log(util.format('%s is a business user with %d notebook(s):',
+          user.username.bold, notebooks.length));
+        console.log();
+        _printNotebooks(notebooks);
+        console.log();
+      });
+
+      client.listBusinessNotebooks(function(err, notebooks) {
+        console.log(util.format('%s can access %d business notebook(s):',
           user.username.bold, notebooks.length));
         console.log();
         _printNotebooks(notebooks);
@@ -263,7 +311,6 @@ if (!authToken) {
 }
 var client = new Evernote.Client({token: authToken, sandbox: true});
 var userStore = client.getUserStore();
-
 userStore.checkVersion(
   "Evernote Certified Developer Program Exercise",
   Evernote.EDAM_VERSION_MAJOR,
@@ -281,7 +328,6 @@ userStore.checkVersion(
     }
   }
 );
-
 var noteStore = client.getNoteStore();
 
 // TODO: Notice about `npm start` doesn't work with args.
