@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/app.js",
   "scripts": {
-    "start": "src/app.js",
+    "start": "echo \"Please use the following command instead:\n\n\t./app.js\" && exit 1",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "@mattnorrisme",

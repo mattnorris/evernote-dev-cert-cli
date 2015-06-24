@@ -83,7 +83,7 @@ var createNote = function() {
 
   // Uploads note to the NoteStore.
   noteStore.createNote(note, function(err, createdNote) {
-    console.log(util.format('%s with ID %s and %d attachment(s).',
+    console.log(util.format('%s with GUID %s and %d attachment(s).',
       'Created a new note'.green,
       createdNote.guid.bold,
       createdNote.resources.length));
@@ -124,7 +124,7 @@ var addDisclaimer = function(guid) {
         process.exit(1);
       }
       else {
-        console.log(util.format('%s with ID %s with disclaimer. %d attachment(s) total.',
+        console.log(util.format('%s with GUID %s with disclaimer. %d attachment(s) total.',
           'Updated note'.green,
           updatedNote.guid.bold,
           updatedNote.resources.length));
@@ -160,15 +160,15 @@ var getNote = function(guid) {
   // Gets note with content, but without resources, OCR, or alternate resource data.
   noteStore.getNote(authToken, guid, true, false, false, false, function(err, note) {
     if (note) {
-      console.log(util.format('%s with ID %s', 'Retrieved note'.green, note.guid.bold));
+      console.log(util.format('%s with GUID %s', 'Retrieved note'.green, note.guid.bold));
       console.log();
     }
     else {
-      console.error(util.format('%s, the note with ID %s %s.',
+      console.error(util.format('%s, the note with GUID %s %s.',
         "I'm sorry".red,
         guid.bold,
         'could not be found'));
-      console.error('Please try another ID.');
+      console.error('Please try another GUID.');
       console.error();
     }
   });
@@ -200,8 +200,8 @@ var printHelp = function() {
   console.log();
   console.log("\t-l, --list\t\tLists user's notebooks");
   console.log("\t-c, --create\t\tCreates a new sample note");
-  console.log("\t-g, --guid [ID]\t\tReturns the specified note");
-  console.log("\t-d, --disclaimer [ID]\tAdds disclaimer to the specified note");
+  console.log("\t-g, --guid [GUID]\tReturns the specified note");
+  console.log("\t-d, --disclaimer [GUID]\tAdds disclaimer to the specified note");
   console.log();
   process.exit();
 }
@@ -265,7 +265,7 @@ else {
   }
   // Gets the note with the specified GUID.
   if (argv.g && argv.g !== true) {
-    console.log(util.format('%s with ID %s...', 'Getting note'.yellow, argv.g.bold));
+    console.log(util.format('%s with GUID %s...', 'Getting note'.yellow, argv.g.bold));
     getNote(argv.g);
     argvValid = true;
   }
