@@ -5,11 +5,12 @@
  */
 
 var argv = require('yargs')
-  .alias('b', 'business')
+  .alias('b', 'businessnotebook')
   .alias('c', 'create')
   .alias('d', 'disclaimer')
   .alias('g', 'guid')
   .alias('l', 'list')
+  .alias('m', 'listbusiness')
   .argv;
 var colors = require('colors');
 var config = require('../config.json');
@@ -214,6 +215,11 @@ var listBusinessNotebooks = function() {
         console.log();
       });
     }
+    else {
+      console.log(util.format('%s is not a business user.',
+        user.username.bold));
+      console.log();
+    }
   });
 }
 
@@ -291,7 +297,7 @@ else {
     argvValid = true;
   }
   // Lists username and business notebooks.
-  if (argv.b) {
+  if (argv.m) {
     listBusinessNotebooks();
     argvValid = true;
   }
@@ -305,6 +311,11 @@ else {
   if (argv.c) {
     createNote();
     argvValid = true;
+  }
+  // Creates a new sample business notebook and note.
+  if (argv.b) {
+    createBusinessNotebookAndNote();
+    argvValid = true
   }
   // Adds disclaimer to note with the specified GUID.
   if (argv.d && argv.d !== true) {
