@@ -5,7 +5,7 @@
  */
 
 var argv = require('yargs')
-  .alias('b', 'businessnotebook')
+  .alias('b', 'business')
   .alias('c', 'create')
   .alias('d', 'disclaimer')
   .alias('g', 'guid')
@@ -283,6 +283,9 @@ var printHelp = function() {
   console.log("\t-c, --create\t\tCreates a new sample note");
   console.log("\t-g, --guid [GUID]\tReturns the specified note");
   console.log("\t-d, --disclaimer [GUID]\tAdds disclaimer to the specified note");
+  console.log()
+  console.log("\t-m, --listbusiness\tLists business notebooks");
+  console.log("\t-b, --business\t\tCreates business notebook and note");
   console.log();
   process.exit();
 }
