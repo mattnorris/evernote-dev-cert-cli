@@ -5,6 +5,7 @@
  */
 
 var argv = require('yargs')
+  .alias('b', 'business')
   .alias('c', 'create')
   .alias('d', 'disclaimer')
   .alias('g', 'guid')
@@ -174,19 +175,38 @@ var getNote = function(guid) {
   });
 }
 
+var _printNotebooks = function(notebooks) {
+  notebooks.forEach(function(notebook, index) {
+    console.log(util.format('\t%s. %s', index + 1, notebook.name));
+  });
+}
+
 /**
  * Lists the current user's username and notebooks.
  */
 var listNotebooks = function() {
   noteStore.listNotebooks(function(err, notebooks) {
     userStore.getUser(function(err, user) {
-      console.log(util.format('%s has %d notebooks:', user.username.bold, notebooks.length));
+      console.log(util.format('%s has %d notebook(s):',
+        user.username.bold, notebooks.length));
       console.log();
-      notebooks.forEach(function(notebook, index) {
-        console.log(util.format('\t%s. %s', index + 1, notebook.name));
-      });
+      _printNotebooks(notebooks);
       console.log();
     });
+  });
+}
+
+var listBusinessNotebooks = function() {
+  userStore.getUser(function(err, user) {
+    if (user.isBusinessUser) {
+      client.getBusinessNoteStore().listNotebooks(function(err, notebooks) {
+        console.log(util.format('%s is a business user with %d notebook(s):',
+          user.username.bold, notebooks.length));
+        console.log();
+        _printNotebooks(notebooks);
+        console.log();
+      });
+    }
   });
 }
 
@@ -261,6 +281,11 @@ else {
   // Lists username and notebooks.
   if (argv.l) {
     listNotebooks();
+    argvValid = true;
+  }
+  // Lists username and business notebooks.
+  if (argv.b) {
+    listBusinessNotebooks();
     argvValid = true;
   }
   // Gets the note with the specified GUID.
