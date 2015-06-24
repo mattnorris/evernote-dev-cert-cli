@@ -175,6 +175,10 @@ var getNote = function(guid) {
   });
 }
 
+/**
+ * Prints notebook titles from the specified list of notebooks.
+ * @param  {Array} notebooks list of user's notebooks
+ */
 var _printNotebooks = function(notebooks) {
   notebooks.forEach(function(notebook, index) {
     console.log(util.format('\t%s. %s', index + 1, notebook.name));
@@ -196,6 +200,9 @@ var listNotebooks = function() {
   });
 }
 
+/**
+ * Lists the current user's username and business notebooks.
+ */
 var listBusinessNotebooks = function() {
   userStore.getUser(function(err, user) {
     if (user.isBusinessUser) {
