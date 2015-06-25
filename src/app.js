@@ -210,20 +210,10 @@ var listNotebooks = function() {
   });
 }
 
-var createBusinessNotebookAndNote = function() {
-  var notebook = new Evernote.Notebook();
-  // var notebook = new Evernote.BusinessNotebook();
-  notebook.name = 'Sample Business Notebook ' + new Date().getTime();
-  // client.createBusinessNotebook(notebook, function(err, createdNotebook) {
-  //
-  //   console.error('createBusinessNotebook', '--------------------------')
-  //   console.log(err);
-  //   console.log(createdNotebook);
-  //   console.error('--------------------------')
-  //
-  //
-  // });
-
+/**
+ * Creates a business note in the most recently created business notebook.
+ */
+var createBusinessNote = function() {
   client.listBusinessNotebooks(function(err, notebooks) {
     var note = _constructNote();
     client.createNoteInBusinessNotebook(note, notebooks[notebooks.length - 1],
@@ -240,6 +230,48 @@ var createBusinessNotebookAndNote = function() {
         }
       }
     );
+  });
+}
+
+_createBusinessNotebook = function(user, notebook, callback) {
+  var self = client;
+  var businessNoteStore = self.getBusinessNoteStore();
+  businessNoteStore.createNotebook(notebook, function(err, businessNotebook) {
+    if (err) {
+      callback(err);
+    } else {
+      var sharedNotebook = businessNotebook.sharedNotebooks[0];
+      var linkedNotebook = new Evernote.LinkedNotebook();
+      linkedNotebook.shareKey = sharedNotebook.shareKey;
+      linkedNotebook.shareName = businessNotebook.name;
+      linkedNotebook.username = user.username;
+      linkedNotebook.shardId = user.shardId;
+      console.log(linkedNotebook);
+      self.getNoteStore().createLinkedNotebook(linkedNotebook,
+        function(err, createdLinkedNotebook) {
+          callback(err, createdLinkedNotebook);
+        }
+      );
+    }
+  });
+};
+
+var createBusinessNotebookAndNote = function() {
+  userStore.getUser(function(err, user) {
+    if (user.isBusinessUser) {
+      var notebook = new Evernote.Notebook();
+      notebook.name = 'Sample Business Notebook ' + new Date().getTime();
+      // createBusinessNotebook(notebook, function(err, createdNotebook) {
+      _createBusinessNotebook(user, notebook, function(err, createdNotebook) {
+        console.log('error', err);
+        console.log('createdNotebook', createdNotebook);
+      });
+    }
+    else {
+      console.log(util.format('%s is not a business user.',
+        user.username.bold));
+      console.log();
+    }
   });
 }
 
