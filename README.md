@@ -17,4 +17,10 @@ Copy/paste your  [developer token](https://sandbox.evernote.com/api/DeveloperTok
 
 ## Run
 
-    npm start
+Create a note. Copy/paste its GUID into the `disclaimer` command. 
+
+    $ ./app.js --create
+    Created a new note with GUID 88888888-4444-4444-4444-000000000012 and 1 attachment(s).
+
+    $ ./app.js --disclaimer 88888888-4444-4444-4444-000000000012
+    Updated note with GUID 88888888-4444-4444-4444-000000000012 with disclaimer. 2 attachment(s) total.
