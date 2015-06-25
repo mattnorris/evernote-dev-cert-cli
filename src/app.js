@@ -246,7 +246,6 @@ _createBusinessNotebook = function(user, notebook, callback) {
       linkedNotebook.shareName = businessNotebook.name;
       linkedNotebook.username = user.username;
       linkedNotebook.shardId = user.shardId;
-      console.log(linkedNotebook);
       self.getNoteStore().createLinkedNotebook(linkedNotebook,
         function(err, createdLinkedNotebook) {
           callback(err, createdLinkedNotebook);
