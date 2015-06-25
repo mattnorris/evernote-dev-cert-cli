@@ -13,11 +13,11 @@ Switch to the desired branch (each branch is an exercise). For example:
 
 Rename `config.template.json` to `config.json`.
 
-Copy/paste your  [developer token](https://sandbox.evernote.com/api/DeveloperToken.action) or [API key](https://dev.evernote.com/#apikey) into `config.json`.
+Copy/paste your  [developer token](https://sandbox.evernote.com/api/DeveloperToken.action) into `config.json`.
 
 ## Run
 
-Create a note. Copy/paste its GUID into the `disclaimer` command. 
+Create a note. Copy/paste its GUID into the `disclaimer` command.
 
     $ ./app.js --create
     Created a new note with GUID 88888888-4444-4444-4444-000000000012 and 1 attachment(s).
