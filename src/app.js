@@ -214,20 +214,32 @@ var createBusinessNotebookAndNote = function() {
   var notebook = new Evernote.Notebook();
   // var notebook = new Evernote.BusinessNotebook();
   notebook.name = 'Sample Business Notebook ' + new Date().getTime();
-  client.createBusinessNotebook(notebook, function(err, createdNotebook) {
-    // FIXME: createdNotebook is always 'undefined',
-    // but the notebook is created success.
-    // console.error('error', err);
-    // console.log('createdNotebook', createdNotebook);
-    _getBusinessNotebooksP().then(function(notebooks) {
-      var latest = notebooks[notebooks.length-1];
-      var tmpFirst = notebooks[0];
-      var note = _constructNote();
-      client.createNoteInBusinessNotebook(note, tmpFirst, function(err, createdNote) {
-        // console.error(err);
-        // console.log(createdNote);
-      });
-    });
+  // client.createBusinessNotebook(notebook, function(err, createdNotebook) {
+  //
+  //   console.error('createBusinessNotebook', '--------------------------')
+  //   console.log(err);
+  //   console.log(createdNotebook);
+  //   console.error('--------------------------')
+  //
+  //
+  // });
+
+  client.listBusinessNotebooks(function(err, notebooks) {
+    var note = _constructNote();
+    client.createNoteInBusinessNotebook(note, notebooks[notebooks.length - 1],
+      function(err, createdNote) {
+        if (err) {
+          console.error(err);
+        }
+        else {
+          console.log(util.format('%s with GUID %s and %d attachment(s).',
+            'Created a new business note'.green,
+            createdNote.guid.bold,
+            createdNote.resources.length));
+          console.log();
+        }
+      }
+    );
   });
 }
 
