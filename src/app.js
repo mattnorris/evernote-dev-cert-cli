@@ -252,10 +252,14 @@ var createBusinessNotebookAndNote = function() {
                 console.log(err);
               }
               else {
-                console.log(util.format('%s with GUID %s and %d attachment(s).',
+                console.log(util.format(
+                  '%s with GUID %s and %d attachment(s) in %s %s with GUID %s.',
                   'Created a new business note'.green,
                   createdNote.guid.bold,
-                  createdNote.resources.length));
+                  createdNote.resources.length,
+                  'new business notebook'.green,
+                  createdNotebook.shareName.bold,
+                  createdNotebook.guid.bold));
                 console.log();
               }
             }
