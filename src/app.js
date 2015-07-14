@@ -233,37 +233,34 @@ var createBusinessNote = function() {
   });
 }
 
-_createBusinessNotebook = function(user, notebook, callback) {
-  var self = client;
-  var businessNoteStore = self.getBusinessNoteStore();
-  businessNoteStore.createNotebook(notebook, function(err, businessNotebook) {
-    if (err) {
-      callback(err);
-    } else {
-      var sharedNotebook = businessNotebook.sharedNotebooks[0];
-      var linkedNotebook = new Evernote.LinkedNotebook();
-      linkedNotebook.shareKey = sharedNotebook.shareKey;
-      linkedNotebook.shareName = businessNotebook.name;
-      linkedNotebook.username = user.username;
-      linkedNotebook.shardId = user.shardId;
-      self.getNoteStore().createLinkedNotebook(linkedNotebook,
-        function(err, createdLinkedNotebook) {
-          callback(err, createdLinkedNotebook);
-        }
-      );
-    }
-  });
-};
-
+/**
+ * Creates a business notebook and adds a new note to it.
+ */
 var createBusinessNotebookAndNote = function() {
   userStore.getUser(function(err, user) {
-    if (user.isBusinessUser) {
+    if(user.isBusinessUser) {
       var notebook = new Evernote.Notebook();
       notebook.name = 'Sample Business Notebook ' + new Date().getTime();
-      // createBusinessNotebook(notebook, function(err, createdNotebook) {
-      _createBusinessNotebook(user, notebook, function(err, createdNotebook) {
-        console.log('error', err);
-        console.log('createdNotebook', createdNotebook);
+      client.createBusinessNotebook(notebook, function(err, createdNotebook) {
+        if (err) {
+          console.log(err);
+        }
+        else {
+          client.createNoteInBusinessNotebook(_constructNote(), createdNotebook,
+            function(err, createdNote) {
+              if (err) {
+                console.log(err);
+              }
+              else {
+                console.log(util.format('%s with GUID %s and %d attachment(s).',
+                  'Created a new business note'.green,
+                  createdNote.guid.bold,
+                  createdNote.resources.length));
+                console.log();
+              }
+            }
+          );
+        }
       });
     }
     else {
@@ -271,26 +268,6 @@ var createBusinessNotebookAndNote = function() {
         user.username.bold));
       console.log();
     }
-  });
-}
-
-var _getBusinessNotebooksP = function() {
-  return new Promise(function(resolve, reject) {
-    userStore.getUser(function(err, user) {
-      if (user && user.isBusinessUser) {
-        client.getBusinessNoteStore().listNotebooks(function(err, notebooks) {
-          if (notebooks) {
-            resolve(notebooks);
-          }
-          else {
-            reject(err);
-          }
-        });
-      }
-      else {
-        reject(err);
-      }
-    });
   });
 }
 
@@ -417,7 +394,7 @@ else {
   // Creates a new sample business notebook and note.
   if (argv.b) {
     createBusinessNotebookAndNote();
-    argvValid = true
+    argvValid = true;
   }
   // Adds disclaimer to note with the specified GUID.
   if (argv.d && argv.d !== true) {

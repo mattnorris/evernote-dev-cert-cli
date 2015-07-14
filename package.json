@@ -12,7 +12,7 @@
   "dependencies": {
     "colors": "^1.1.2",
     "es6-promise": "^2.3.0",
-    "evernote": "^1.25.7",
+    "evernote": "1.25.801-beta",
     "yargs": "^3.11.0"
   }
 }
