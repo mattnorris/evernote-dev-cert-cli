@@ -13,8 +13,8 @@ Switch to the desired branch (each branch is an exercise). For example:
 
 Rename `config.template.json` to `config.json`.
 
-Copy/paste your  [developer token](https://sandbox.evernote.com/api/DeveloperToken.action) or [API key](https://dev.evernote.com/#apikey) into `config.json`.
+Copy/paste your  [developer token](https://sandbox.evernote.com/api/DeveloperToken.action) into `config.json`.
 
 ## Run
 
-    npm start
+    ./app.js -b
